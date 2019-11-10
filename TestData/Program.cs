@@ -35,7 +35,7 @@ namespace TestData
                 }
             }
             Console.WriteLine("----------------------------------------------------------");
-            Console.WriteLine("Page Count"+pageCount);
+            Console.WriteLine("Page Count: "+pageCount);
             Console.ReadLine();
         }
     }
