@@ -252,5 +252,55 @@ namespace NothwindDAL
             return flag;
         }
 
+        public bool UpdateCustomer(Customer customer)
+        {
+            bool flag = false;
+            if ((!string.IsNullOrEmpty(customer.CustomerID))&&(!string.IsNullOrEmpty(customer.Fax)))
+            {
+                SqlConnection sqlConnection = null;
+                SqlCommand sqlCommand = null;
+
+                string query = "UPDATE Customers SET Fax=@FAX WHERE CustomerID=@CustomerID";
+               
+                try
+                {
+                    sqlConnection = new SqlConnection();
+                    DataLoader.LoadConnection(sqlConnection);
+                    DataLoader.OpenConnection(sqlConnection);
+                    List<SqlParameter> sqlParameters = new List<SqlParameter>();
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@CustomerID", Value = customer.CustomerID, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@FAX", Value = customer.Fax, DbType = System.Data.DbType.String });
+                    sqlCommand = DataLoader.CreateSQLCommand(sqlConnection, System.Data.CommandType.Text, query, sqlParameters);
+                    
+                    if (sqlCommand != null)
+                    {
+                        int n = sqlCommand.ExecuteNonQuery();
+                       
+                        if (n>0)
+                        {
+                            flag=true;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Unable to Create SQL Command");
+                    }
+
+                }
+                catch (Exception)
+                {
+
+                    //return null;
+                }
+                finally
+                {
+                    DataLoader.CloseConnection(sqlConnection);
+                    DataLoader.DisposeSQLObj(sqlCommand);
+                }
+            }
+
+            return flag;
+        }
+
     }
 }

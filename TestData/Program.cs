@@ -47,6 +47,13 @@ namespace TestData
                 Console.WriteLine("deleted ernsh");
             }
             Console.WriteLine("----------------------------------------------------------");
+            customer.Fax = "030-0076546";
+            Console.WriteLine("----------------------------------------------------------");
+            if (customerDAL.UpdateCustomer(customer))
+            {
+                Console.WriteLine("Updating ALFKI");
+            }
+            Console.WriteLine("----------------------------------------------------------");
             Console.ReadLine();
         }
     }
