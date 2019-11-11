@@ -18,9 +18,12 @@ namespace NorthwindSolution.Repository
         {
             customerDAL = new CustomerDAL();
         }
-        public Task<List<Customer>> GetCustomersAsync()
+        public async Task<List<Customer>> GetCustomersAsync()
         {
-            return Task.FromResult<List<Customer>>(customerDAL.GetCustomers());         
+            return await Task.Run(()=>
+            {
+                return customerDAL.GetCustomers();
+            });         
         }
     }
 }
