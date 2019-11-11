@@ -16,6 +16,8 @@ namespace TestData
             List<Customer> customers = customerDAL.GetCustomers();
             int pageCount;
             List<Customer> customers1 = customerDAL.GetCustomers(5,out pageCount,pageNo:2);
+            Customer customer = customerDAL.GetCustomerDetails("ALFKI");
+            
 
             if ((customers!=null)&&(customers.Count>0))
             {
@@ -36,6 +38,15 @@ namespace TestData
             }
             Console.WriteLine("----------------------------------------------------------");
             Console.WriteLine("Page Count: "+pageCount);
+            Console.WriteLine("----------------------------------------------------------");
+            Console.WriteLine(customer.CustomerID + "||" + customer.ContactName);
+            Console.WriteLine("----------------------------------------------------------");
+            Console.WriteLine("----------------------------------------------------------");
+            if (customerDAL.DeleteCustomer("ERNSH"))
+            {
+                Console.WriteLine("deleted ernsh");
+            }
+            Console.WriteLine("----------------------------------------------------------");
             Console.ReadLine();
         }
     }

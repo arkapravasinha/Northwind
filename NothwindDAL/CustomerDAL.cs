@@ -53,7 +53,7 @@ namespace NothwindDAL
             catch (Exception)
             {
 
-                return null;
+                //return null;
             }
             finally
             {
@@ -136,14 +136,121 @@ namespace NothwindDAL
             catch (Exception)
             {
 
-                return null;
+                //return null;
+            }
+            finally
+            {
+                DataLoader.CloseConnection(sqlConnection);
+                DataLoader.DisposeSQLObj(sqlCommand);
+                DataLoader.DisposeSQLObj(sqlCommand1);
+            }
+            return customerList;
+        }
+
+        public Customer GetCustomerDetails(string customerId)
+        {
+            
+                
+                SqlConnection sqlConnection = null;
+                SqlCommand sqlCommand = null;
+                
+                string query = "SELECT * FROM Customers WHERE CustomerID=@CustomerID";
+                Customer customer = null;
+                try
+                {
+                    sqlConnection = new SqlConnection();
+                    DataLoader.LoadConnection(sqlConnection);
+                    DataLoader.OpenConnection(sqlConnection);
+                    List<SqlParameter> sqlParameters = new List<SqlParameter>();
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@CustomerID", Value = customerId, DbType = System.Data.DbType.String });
+                    sqlCommand = DataLoader.CreateSQLCommand(sqlConnection, System.Data.CommandType.Text, query, sqlParameters);
+                    customer = new Customer();
+                    if (sqlCommand != null)
+                    {
+                        SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                        while (sqlDataReader.Read())
+                        {
+                        customer.CustomerID = sqlDataReader.GetString(0);
+                        customer.CompanyName = sqlDataReader.IsDBNull(1) ? null : sqlDataReader.GetString(1);
+                        customer.ContactName = sqlDataReader.IsDBNull(2) ? null : sqlDataReader.GetString(2);
+                        customer.ContactTitle = sqlDataReader.IsDBNull(3) ? null : sqlDataReader.GetString(3);
+                        customer.Address = sqlDataReader.IsDBNull(4) ? null : sqlDataReader.GetString(4);
+                        customer.City = sqlDataReader.IsDBNull(5) ? null : sqlDataReader.GetString(5);
+                        customer.Region = sqlDataReader.IsDBNull(6) ? null : sqlDataReader.GetString(6);
+                        customer.PostalCode = sqlDataReader.IsDBNull(7) ? null : sqlDataReader.GetString(7);
+                        customer.Country = sqlDataReader.IsDBNull(8) ? null : sqlDataReader.GetString(8);
+                        customer.Phone = sqlDataReader.IsDBNull(9) ? null : sqlDataReader.GetString(9);
+                        customer.Fax = sqlDataReader.IsDBNull(10) ? null : sqlDataReader.GetString(10);                            
+                        }
+                        if (!sqlDataReader.IsClosed)
+                        {
+                            sqlDataReader.Close();
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Unable to Create SQL Command");
+                    }
+                    
+                }
+                catch (Exception)
+                {
+
+                    //return null;
+                }
+                finally
+                {
+                    DataLoader.CloseConnection(sqlConnection);
+                    DataLoader.DisposeSQLObj(sqlCommand);
+                }
+                return customer;
+            }
+
+        public bool DeleteCustomer(string customerId)
+
+        {
+            bool flag = false;
+
+            SqlConnection sqlConnection = null;
+            SqlCommand sqlCommand = null;
+
+            string query = "DELETE FROM Customers WHERE CustomerID=@CustomerID";
+            try
+            {
+                sqlConnection = new SqlConnection();
+                DataLoader.LoadConnection(sqlConnection);
+                DataLoader.OpenConnection(sqlConnection);
+                List<SqlParameter> sqlParameters = new List<SqlParameter>();
+                sqlParameters.Add(new SqlParameter() { ParameterName = "@CustomerID", Value = customerId, DbType = System.Data.DbType.String });
+                sqlCommand = DataLoader.CreateSQLCommand(sqlConnection, System.Data.CommandType.Text, query, sqlParameters);
+                
+                if (sqlCommand != null)
+                {
+                    int n = sqlCommand.ExecuteNonQuery();
+                    
+                    if (n>0)
+                    {
+                        flag = true;
+                    }
+                }
+                else
+                {
+                    throw new Exception("Unable to Create SQL Command");
+                }
+
+            }
+            catch (Exception)
+            {
+
+                
             }
             finally
             {
                 DataLoader.CloseConnection(sqlConnection);
                 DataLoader.DisposeSQLObj(sqlCommand);
             }
-            return customerList;
+            return flag;
         }
+
     }
 }
