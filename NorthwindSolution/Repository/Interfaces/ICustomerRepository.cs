@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NorthwindSolution.Repository.Interfaces
 {
-    interface ICustomerRepository
+    public interface ICustomerRepository
     {
         Task<List<Customer>> GetCustomersAsync();
     }

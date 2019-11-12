@@ -15,9 +15,9 @@ namespace NorthwindSolution.Controllers
     public class CustomerController : ApiController
     {
         ICustomerRepository _customerRepository;
-        public CustomerController()
+        public CustomerController(ICustomerRepository customerRepository)
         {
-            _customerRepository = new CustomerRepository();
+            _customerRepository = customerRepository;
         }
         // GET api/<controller>
         public async Task<IHttpActionResult> Get()
