@@ -1,4 +1,5 @@
-﻿using NorthwindSolution.Repository;
+﻿using NorthwindSolution.Models;
+using NorthwindSolution.Repository;
 using NorthwindSolution.Repository.Interfaces;
 using NothwindDAL;
 using NothwindDAL.Entities;
@@ -23,8 +24,10 @@ namespace NorthwindSolution.Controllers
         public async Task<IHttpActionResult> Get()
         {
 
-            List<Customer> customers = await _customerRepository.GetCustomersAsync();
-            return Ok(customers);
+            List<Customer> customers = await _customerRepository.GetCustomersAsync().ConfigureAwait(false);
+            var query = from c in customers
+                        select _customerRepository.CustomerMapper(c);
+            return Ok(query.ToList<CustomerModel>());
         }
 
         //public IHttpActionResult Get()
