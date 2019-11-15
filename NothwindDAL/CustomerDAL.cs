@@ -53,7 +53,7 @@ namespace NothwindDAL
             catch (Exception)
             {
 
-                //return null;
+                throw;
             }
             finally
             {
@@ -136,7 +136,7 @@ namespace NothwindDAL
             catch (Exception)
             {
 
-                //return null;
+                throw;
             }
             finally
             {
@@ -196,7 +196,7 @@ namespace NothwindDAL
                 catch (Exception)
                 {
 
-                    //return null;
+                    throw;
                 }
                 finally
                 {
@@ -242,7 +242,7 @@ namespace NothwindDAL
             catch (Exception)
             {
 
-                
+                throw;
             }
             finally
             {
@@ -290,7 +290,7 @@ namespace NothwindDAL
                 catch (Exception)
                 {
 
-                    //return null;
+                    throw;
                 }
                 finally
                 {

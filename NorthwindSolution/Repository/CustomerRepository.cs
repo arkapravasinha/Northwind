@@ -116,7 +116,7 @@ namespace NorthwindSolution.Repository
                     List<Customer> customers = customerDAL.GetCustomers(pageSize, out n, pageNo);
                     PageCountAsync = n;
                     return customers;
-                });
+                }).ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -147,7 +147,7 @@ namespace NorthwindSolution.Repository
                 return await Task.Run(() =>
                 {
                     return customerDAL.GetCustomerDetails(customerId);
-                });
+                }).ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -177,7 +177,7 @@ namespace NorthwindSolution.Repository
                 return await Task.Run(() =>
                {
                    return customerDAL.DeleteCustomer(customerId);
-               });
+               }).ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -206,7 +206,7 @@ namespace NorthwindSolution.Repository
                 return await Task.Run(() =>
                 {
                     return customerDAL.UpdateCustomer(CustomerMapper(customerModel));
-                });
+                }).ConfigureAwait(false);
             }
             catch (Exception)
             {

@@ -6,12 +6,14 @@ namespace NorthwindSolution.App_Start
     using System;
     using System.Web;
     using System.Web.Http;
+    using AutoMapper;
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 
     using Ninject;
     using Ninject.Web.Common;
     using NorthwindSolution.Repository;
     using NorthwindSolution.Repository.Interfaces;
+    using NorthwindSolution.Repository.MappingProfile;
     using WebApiContrib.IoC.Ninject;
 
     public static class NinjectWebCommon 
@@ -47,6 +49,7 @@ namespace NorthwindSolution.App_Start
             {
                 kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
                 kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
+                //add to register Ninject  as dependency resolver by arka
                 GlobalConfiguration.Configuration.DependencyResolver = new NinjectResolver(kernel);
                 RegisterServices(kernel);
                 return kernel;
@@ -65,6 +68,20 @@ namespace NorthwindSolution.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<ICustomerRepository>().To<CustomerRepository>();
+
+            //automapper added by me
+            kernel.Bind<IMapper>()
+                    .ToMethod(context =>
+                    {
+                        var config = new MapperConfiguration(cfg =>
+                        {
+                            cfg.AddProfile<CustomerMappingProfile>();
+                            // tell automapper to use ninject when creating value converters and resolvers
+                            cfg.ConstructServicesUsing(t => kernel.Get(t));
+                        });
+                        return config.CreateMapper();
+                    }).InSingletonScope();
+
         }        
     }
 }

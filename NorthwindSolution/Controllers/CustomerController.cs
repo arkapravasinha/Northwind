@@ -1,4 +1,5 @@
-﻿using NorthwindSolution.Models;
+﻿using AutoMapper;
+using NorthwindSolution.Models;
 using NorthwindSolution.Repository;
 using NorthwindSolution.Repository.Interfaces;
 using NothwindDAL;
@@ -13,47 +14,47 @@ using System.Web.Http;
 
 namespace NorthwindSolution.Controllers
 {
+    [RoutePrefix("api/Customer")]
     public class CustomerController : ApiController
     {
         ICustomerRepository _customerRepository;
-        public CustomerController(ICustomerRepository customerRepository)
+        IMapper _mapper;
+        public CustomerController(ICustomerRepository customerRepository,IMapper mapper)
         {
             _customerRepository = customerRepository;
+            _mapper = mapper;
         }
-        // GET api/<controller>
-        public async Task<IHttpActionResult> Get()
+        
+        [Route("GetCustomers")]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetCustomerss()
         {
+            try
+            {
+                List<Customer> customers = await _customerRepository.GetCustomersAsync().ConfigureAwait(false);
 
-            List<Customer> customers = await _customerRepository.GetCustomersAsync().ConfigureAwait(false);
-            var query = from c in customers
-                        select _customerRepository.CustomerMapper(c);
-            return Ok(query.ToList<CustomerModel>());
+                //Custome Build
+                //var query = from c in customers
+                //            select _customerRepository.CustomerMapper(c);
+
+                if((customers !=null )&&( customers.Count!=0))
+                {
+                    //Using Auto Mapper
+                    var results = _mapper.Map<IEnumerable<CustomerModel>>(customers);
+                    return Ok(results);
+                }
+                else
+                {
+                    return NotFound();
+                }                
+            }
+            catch (Exception ex)
+            {
+
+                return InternalServerError(ex);
+            }
         }
 
-        //public IHttpActionResult Get()
-        //{
-        //    return Ok(new CustomerDAL().GetCustomers());
-        //}
-
-        // GET api/<controller>/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<controller>
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/<controller>/5
-        public void Delete(int id)
-        {
-        }
+       
     }
 }
