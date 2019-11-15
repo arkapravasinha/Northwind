@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Web.Http;
 using NorthwindSolution.Models;
 using NorthwindSolution.Repository;
 using NorthwindSolution.Repository.Interfaces;
@@ -14,26 +15,32 @@ using System.Web.Http;
 
 namespace NorthwindSolution.Controllers
 {
-    [RoutePrefix("api/Customer")]
-    public class CustomerController : ApiController
+    [RoutePrefix("api/v{version:apiVersion}/Customer")]
+    [ApiVersion("2.0")]
+    public class Customerv2Controller : ApiController
     {
         ICustomerRepository _customerRepository;
         IMapper _mapper;
-        public CustomerController(ICustomerRepository customerRepository,IMapper mapper)
+        public Customerv2Controller(ICustomerRepository customerRepository,IMapper mapper)
         {
             _customerRepository = customerRepository;
             _mapper = mapper;
         }
         
+        /// <summary>
+        /// Get All Customers
+        /// </summary>
+        /// <returns>List of Customers</returns>
         [Route("GetCustomers")]
         [HttpGet]
+      //[MapToApiVersion("2.0")] //we can put the specific version here as well
         public async Task<IHttpActionResult> GetCustomerss()
         {
             try
             {
                 List<Customer> customers = await _customerRepository.GetCustomersAsync().ConfigureAwait(false);
 
-                //Custome Build
+                //Custom Build
                 //var query = from c in customers
                 //            select _customerRepository.CustomerMapper(c);
 
@@ -41,7 +48,9 @@ namespace NorthwindSolution.Controllers
                 {
                     //Using Auto Mapper
                     var results = _mapper.Map<IEnumerable<CustomerModel>>(customers);
-                    return Ok(results);
+
+                    
+                    return Ok(new { success=true, data=results });
                 }
                 else
                 {
@@ -53,6 +62,7 @@ namespace NorthwindSolution.Controllers
 
                 return InternalServerError(ex);
             }
+            
         }
 
        

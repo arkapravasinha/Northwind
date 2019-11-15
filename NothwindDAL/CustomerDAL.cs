@@ -302,6 +302,66 @@ namespace NothwindDAL
             return flag;
         }
 
+        public bool AddCustomer(Customer customer)
+        {
+            bool flag = false;
+            if (customer!=null)
+            {
+                SqlConnection sqlConnection = null;
+                SqlCommand sqlCommand = null;
+
+                string query = "INSERT INTO Customers(CustomerID,CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax)"+
+                               "VALUES(@CustomerID, @CompanyName, @ContactName, @ContactTitle, @Address, @City, @Region, @PostalCode, @Country, @Phone, @Fax)";
+
+                try
+                {
+                    sqlConnection = new SqlConnection();
+                    DataLoader.LoadConnection(sqlConnection);
+                    DataLoader.OpenConnection(sqlConnection);
+                    List<SqlParameter> sqlParameters = new List<SqlParameter>();
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@CustomerID", Value = customer.CustomerID, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@CompanyName", Value = customer.CompanyName, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@ContactName", Value = customer.ContactName, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@ContactTitle", Value = customer.ContactTitle, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@Address", Value = customer.Address, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@City", Value = customer.City, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@Region", Value = customer.Region, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@PostalCode", Value = customer.PostalCode, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@Country", Value = customer.Country, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@Phone", Value = customer.Phone, DbType = System.Data.DbType.String });
+                    sqlParameters.Add(new SqlParameter() { ParameterName = "@Fax", Value = customer.Fax, DbType = System.Data.DbType.String });
+                    sqlCommand = DataLoader.CreateSQLCommand(sqlConnection, System.Data.CommandType.Text, query, sqlParameters);
+
+                    if (sqlCommand != null)
+                    {
+                        int n = sqlCommand.ExecuteNonQuery();
+
+                        if (n > 0)
+                        {
+                            flag = true;
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Unable to Create SQL Command");
+                    }
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                finally
+                {
+                    DataLoader.CloseConnection(sqlConnection);
+                    DataLoader.DisposeSQLObj(sqlCommand);
+                }
+            }
+
+            return flag;
+        }
+
         
     }
 }
