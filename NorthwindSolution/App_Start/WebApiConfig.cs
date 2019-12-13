@@ -40,11 +40,11 @@ namespace NorthwindSolution
                 cfg.ApiVersionReader = new UrlSegmentApiVersionReader();
 
                 //config conventions for assigning versions here
-                cfg.Conventions.Controller<Customerv2Controller>()
-                .HasApiVersion(1, 0)
-                .HasApiVersion(1, 1)
-                .Action(m => m.Get(default(string), default(int), default(bool)))
-                .MapToApiVersion(2, 0);
+                //cfg.Conventions.Controller<Customerv2Controller>()
+                //.HasApiVersion(1, 0)
+                //.HasApiVersion(1, 1)
+                //.Action(m => m.Get(default(string), default(int), default(bool)))
+                //.MapToApiVersion(2, 0);
 
             });
 
