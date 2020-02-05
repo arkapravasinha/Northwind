@@ -2,6 +2,8 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Owin.Security;
+using NorthwindSolution.AuthServerEntities;
+using System.Collections.Generic;
 
 namespace NorthwindSolution
 {
@@ -25,20 +27,50 @@ namespace NorthwindSolution
             identity.AddClaim(new Claim(ClaimTypes.Email, "admin@admin.com"));
             identity.AddClaim(new Claim(ClaimTypes.Name, "Admin Boss"));
 
-            var properties = new AuthenticationProperties();
+            var properties = new AuthenticationProperties(new Dictionary<string, string>
+                {
+                    {
+                         "audience", (context.ClientId == null) ? string.Empty : context.ClientId
+                    }
+                });
+
             var ticket = new AuthenticationTicket(identity, properties);
 
             context.Validated(ticket);
         }
 
-        public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+        public override  Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
-            //if (context.ClientId=="MVC1")
-            //{
-                context.Validated();
-            //}
 
-            //return;
+            //Normal bearer token Authentication
+            // context.Validated();
+
+            string clientId = string.Empty;
+            string clientSecret = string.Empty;
+            string symmetricKeyAsBase64 = string.Empty;
+
+            if (!context.TryGetBasicCredentials(out clientId, out clientSecret))
+            {
+                context.TryGetFormCredentials(out clientId, out clientSecret);
+            }
+
+            if (context.ClientId == null)
+            {
+                context.SetError("invalid_clientId", "client_Id is not set");
+                return  Task.FromResult<object>(null);
+            }
+
+            var audience = InMemoryAudineceStore.GetAudience(context.ClientId);
+
+            if (audience == null)
+            {
+                context.SetError("invalid_clientId", string.Format("Invalid client_id '{0}'", context.ClientId));
+                return Task.FromResult<object>(null);
+            }
+
+            context.Validated();
+            return Task.FromResult<object>(null);
+
         }
     }
 }
